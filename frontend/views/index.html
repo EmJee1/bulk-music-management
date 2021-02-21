@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Bulk music management</title>
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="script-src 'self' 'unsafe-inline';"
+		/>
+		<link rel="stylesheet" href="../style/style.css" />
+	</head>
+	<body>
+		<h1>Bulk music management</h1>
+		<hr />
+
+		<div class="file-selector">
+			<button class="btn" id="select-path">Select your music folder</button>
+			<p>Selected path: <span class="italic" id="path-preview"></span></p>
+		</div>
+
+		<div class="show-path-selected">
+			<button class="btn" id="scan-items">
+				Scan files in the selected folder
+			</button>
+			<button class="btn" id="rename-items">
+				Rename files in the selected folder
+			</button>
+		</div>
+
+		<div class="scanned-audio" id="scanned-audio"></div>
+
+		<div class="progress-bar">
+			<div class="progress-bar-inner"></div>
+		</div>
+	</body>
+</html>
+
+<script defer>
+	const renameItemsBtn = document.querySelector('#rename-items')
+	const scanItemsBtn = document.querySelector('#scan-items')
+	const selectPathBtn = document.querySelector('#select-path')
+	const pathPreview = document.querySelector('#path-preview')
+	const scannedAudio = document.querySelector('#scanned-audio')
+	let scannedAudioFiles = []
+	let selectedPath = false
+
+	const updatePathInUI = () => {
+		document
+			.querySelectorAll('.show-path-selected')
+			.forEach(i => (i.style.display = selectedPath ? 'block' : 'none'))
+		let str = selectedPath ? selectedPath : 'No path selected'
+		pathPreview.innerText = '"' + str + '"'
+	}
+	updatePathInUI()
+
+	const renderScannedAudio = () => {
+		scannedAudio.innerHTML = ''
+		if (!scannedAudioFiles || !scannedAudioFiles.length) {
+			const p = document.createElement('p')
+			p.innerText = 'No files selected'
+			scannedAudio.append(p)
+			return
+		}
+		scannedAudioFiles.forEach(file => {
+			const p = document.createElement('p')
+			p.innerText = file
+			p.append(document.createElement('button'))
+			scannedAudio.append(p)
+		})
+	}
+	renderScannedAudio()
+
+	selectPathBtn.addEventListener('click', () =>
+		window.postMessage({ type: 'TASK_FOLDER_SELECT' })
+	)
+
+	scanItemsBtn.addEventListener('click', () =>
+		window.postMessage({ type: 'TASK_RUN_SCAN_FILES', path: selectedPath })
+	)
+
+	renameItemsBtn.addEventListener('click', () =>
+		window.postMessage({ type: 'TASK_RUN_RENAME', path: selectedPath })
+	)
+
+	window.addEventListener('message', evt => {
+		if (evt.data.type === 'DATA_FOLDER_SELECT_CANCELED') {
+			selectedPath = false
+			updatePathInUI()
+		} else if (evt.data.type === 'DATA_FOLDER_SELECT') {
+			selectedPath = evt.data.path
+			updatePathInUI()
+		} else if (evt.data.type === 'DATA_FILE_SCAN') {
+			scannedAudioFiles.push(...evt.data.files)
+			renderScannedAudio()
+		}
+	})
+</script>

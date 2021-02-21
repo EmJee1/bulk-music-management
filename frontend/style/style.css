@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap');
+
+:root {
+	--blue: #2980b9;
+	--black: #2c3e50;
+	--white: #ecf0f1;
+}
+
+body {
+	background: var(--black);
+	color: var(--white);
+	font-family: 'Lato', sans-serif;
+}
+
+h1 {
+	font-weight: 500;
+}
+
+.btn {
+	background-color: var(--blue);
+	border: 1px solid transparent;
+	border-radius: 2px;
+	padding: 0.4rem 0.8rem;
+	color: var(--white);
+	height: fit-content;
+}
+
+.file-selector {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 1rem;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.scanned-audio {
+	display: none;
+	position: relative;
+	display: block;
+	margin-top: 1rem;
+	width: 90%;
+	border: 2px solid var(--blue);
+	background-color: #2c3e50;
+	max-height: 250px;
+	overflow-y: scroll;
+	border-radius: 2px;
+	transition: all .5s;
+}
+.scanned-audio p {
+	margin: 0;
+	padding: .6rem .4rem;
+	display: flex;
+	justify-content: space-between;
+}
+.scanned-audio p:hover {
+	background-color: var(--white);
+	color: var(--blue);
+}
+.scanned-audio p button {
+	width: 20px;
+	height: 20px;
+	background-color: black;
+	border: none;
+}
+
+.progress-bar {
+	display: none;
+	position: relative;
+	display: block;
+	margin-top: 1rem;
+	width: 90%;
+	border: 2px solid var(--blue);
+	background-color: #2c3e50;
+	height: 40px;
+	border-radius: 2px;
+}
+
+.progress-bar-inner {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	width: 0%;
+	height: 100%;
+	background-color: var(--white);
+	border-radius: 2px;
+	transition: all .4s;
+}
