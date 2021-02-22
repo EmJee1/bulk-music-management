@@ -22,12 +22,23 @@
 			<button class="btn" id="scan-items">
 				Scan files in the selected folder
 			</button>
+		</div>
+
+		<div class="scanned-audio" id="scanned-audio"></div>
+
+		<div class="show-audio-scanned">
+			<div class="row">
+				<button class="btn" id="clear-scanned-audio">
+					Clear scanned audio
+				</button>
+				<button class="btn" id="remove-duplicates-scanned-audio">
+					Remove duplicates from scanned audio
+				</button>
+			</div>
 			<button class="btn" id="rename-items">
 				Rename files in the selected folder
 			</button>
 		</div>
-
-		<div class="scanned-audio" id="scanned-audio"></div>
 
 		<div class="progress-bar">
 			<div class="progress-bar-inner"></div>
@@ -41,6 +52,10 @@
 	const selectPathBtn = document.querySelector('#select-path')
 	const pathPreview = document.querySelector('#path-preview')
 	const scannedAudio = document.querySelector('#scanned-audio')
+	const clearScannedAudioBtn = document.querySelector('#clear-scanned-audio')
+	const removeDuplicatesScannedAudioBtn = document.querySelector(
+		'#remove-duplicates-scanned-audio'
+	)
 	let scannedAudioFiles = []
 	let selectedPath = false
 
@@ -53,22 +68,46 @@
 	}
 	updatePathInUI()
 
+	const removeItemFromScanned = index => {
+		scannedAudioFiles.splice(index, 1)
+		renderScannedAudio()
+	}
+
 	const renderScannedAudio = () => {
 		scannedAudio.innerHTML = ''
+
+		document
+			.querySelectorAll('.show-audio-scanned')
+			.forEach(
+				i => (i.style.display = scannedAudioFiles.length ? 'block' : 'none')
+			)
+
 		if (!scannedAudioFiles || !scannedAudioFiles.length) {
 			const p = document.createElement('p')
 			p.innerText = 'No files selected'
 			scannedAudio.append(p)
 			return
 		}
-		scannedAudioFiles.forEach(file => {
+		scannedAudioFiles.map((file, index) => {
 			const p = document.createElement('p')
 			p.innerText = file
-			p.append(document.createElement('button'))
+			const btn = document.createElement('button')
+			btn.addEventListener('click', () => removeItemFromScanned(index))
+			p.append(btn)
 			scannedAudio.append(p)
 		})
 	}
 	renderScannedAudio()
+
+	clearScannedAudioBtn.addEventListener('click', () => {
+		scannedAudioFiles = []
+		renderScannedAudio()
+	})
+
+	removeDuplicatesScannedAudioBtn.addEventListener('click', () => {
+		scannedAudioFiles = [...new Set(scannedAudioFiles)]
+		renderScannedAudio()
+	})
 
 	selectPathBtn.addEventListener('click', () =>
 		window.postMessage({ type: 'TASK_FOLDER_SELECT' })
