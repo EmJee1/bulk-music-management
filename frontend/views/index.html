@@ -35,9 +35,12 @@
 					Remove duplicates from scanned audio
 				</button>
 			</div>
-			<button class="btn" id="rename-items">
-				Rename files in the selected folder
-			</button>
+			<div class="row">
+				<button class="btn" id="rename-items">
+					Rename files in the selected folder
+				</button>
+				<input type="text" id="rename-structure" />
+			</div>
 		</div>
 
 		<div class="progress-bar">
@@ -52,6 +55,7 @@
 	const selectPathBtn = document.querySelector('#select-path')
 	const pathPreview = document.querySelector('#path-preview')
 	const scannedAudio = document.querySelector('#scanned-audio')
+	const renameStructure = document.querySelector('#rename-structure')
 	const clearScannedAudioBtn = document.querySelector('#clear-scanned-audio')
 	const removeDuplicatesScannedAudioBtn = document.querySelector(
 		'#remove-duplicates-scanned-audio'
@@ -118,7 +122,11 @@
 	)
 
 	renameItemsBtn.addEventListener('click', () =>
-		window.postMessage({ type: 'TASK_RUN_RENAME', path: selectedPath })
+		window.postMessage({
+			type: 'TASK_RUN_RENAME',
+			files: scannedAudioFiles,
+			namingStructure: JSON.parse(renameStructure.value),
+		})
 	)
 
 	window.addEventListener('message', evt => {
